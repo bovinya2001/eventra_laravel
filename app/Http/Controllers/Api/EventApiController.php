@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Event;
+use App\Services\WeatherForecastService;
 use Illuminate\Http\Request;
 
 class EventApiController extends Controller
@@ -46,13 +47,15 @@ class EventApiController extends Controller
      * Get single event details
      * GET /api/v1/events/{id}
      */
-    public function show(Event $event)
+    public function show(Event $event, WeatherForecastService $weatherService)
     {
         $event->loadCount('registrations');
 
         return response()->json([
             'status' => 'success',
-            'data'   => $this->formatEvent($event, detailed: true),
+            'data'   => array_merge($this->formatEvent($event, detailed: true), [
+                'weather' => $weatherService->forEvent($event),
+            ]),
         ]);
     }
 
@@ -132,6 +135,11 @@ class EventApiController extends Controller
             'spots_remaining'    => $event->capacity - ($event->registrations_count ?? 0),
             'is_full'            => ($event->capacity - ($event->registrations_count ?? 0)) <= 0,
             'image_url'          => $event->image ? asset('storage/' . $event->image) : null,
+            'coordinates'        => $event->latitude !== null ? [
+                'latitude' => $event->latitude,
+                'longitude' => $event->longitude,
+            ] : null,
+            'map_embed_url'      => $event->map_embed_url,
         ];
 
         if ($detailed) {

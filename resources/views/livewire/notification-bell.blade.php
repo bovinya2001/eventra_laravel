@@ -1,6 +1,6 @@
 <div class="relative">
     <button wire:click="toggleDropdown" 
-        class="relative p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800">
+        class="relative p-2 text-[#8888aa] hover:text-white transition-colors rounded-lg hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
         </svg>
@@ -12,12 +12,12 @@
     </button>
 
     @if($showDropdown)
-    <div class="absolute right-0 mt-2 w-80 bg-slate-800/95 border border-slate-700 rounded-2xl shadow-2xl z-50 backdrop-blur">
+    <div class="absolute right-0 mt-2 w-80 bg-[#12121a]/95 border border-white/10 rounded-2xl shadow-2xl z-50 backdrop-blur">
         <!-- Header -->
-        <div class="flex items-center justify-between p-4 border-b border-slate-700">
-            <h3 class="font-semibold text-white">Notifications</h3>
+        <div class="flex items-center justify-between p-4 border-b border-white/5">
+            <h3 class="font-display font-semibold text-white">Notifications</h3>
             @if($unreadCount > 0)
-                <button wire:click="markAllAsRead" class="text-xs text-indigo-400 hover:text-indigo-300">
+                <button wire:click="markAllAsRead" class="text-xs text-violet-400 hover:text-violet-300">
                     Mark all as read
                 </button>
             @endif
@@ -26,7 +26,7 @@
         <!-- Notifications List -->
         <div class="max-h-96 overflow-y-auto">
             @forelse($notifications as $notification)
-                <div class="p-4 border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors cursor-pointer {{ !$notification->isRead() ? 'bg-slate-700/20' : '' }}">
+                <div class="p-4 border-b border-white/5 hover:bg-white/[.03] transition-colors cursor-pointer {{ !$notification->isRead() ? 'bg-violet-600/[.06]' : '' }}">
                     <div class="flex gap-3">
                         <!-- Icon -->
                         <div class="flex-shrink-0">
@@ -82,7 +82,7 @@
         </div>
 
         <!-- Footer -->
-        <div class="p-3 border-t border-slate-700 text-center">
+        <div class="p-3 border-t border-white/5 text-center">
             <a href="#" class="text-sm text-indigo-400 hover:text-indigo-300">View all notifications →</a>
         </div>
     </div>

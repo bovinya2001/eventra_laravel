@@ -1,17 +1,17 @@
 <div class="space-y-8">
     <!-- Filters -->
     <div class="flex flex-col sm:flex-row gap-4">
-        <input type="text" placeholder="Search events..." wire:model.live="search"
-            class="flex-1 bg-slate-800/50 border border-slate-700 text-white placeholder-slate-500 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <input type="text" placeholder="Search events or venues..." wire:model.live="search"
+            class="flex-1 bg-[#12121a] border border-white/5 text-white placeholder-[#8888aa] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-violet-500/50">
         
-        <select wire:model.live="status" class="bg-slate-800/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <select wire:model.live="status" class="bg-[#12121a] border border-white/5 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-violet-500/50">
             <option value="">All Statuses</option>
             <option value="upcoming">Upcoming</option>
             <option value="ongoing">Ongoing</option>
             <option value="completed">Completed</option>
         </select>
 
-        <select wire:model.live="sort" class="bg-slate-800/50 border border-slate-700 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <select wire:model.live="sort" class="bg-[#12121a] border border-white/5 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-violet-500/50">
             <option value="event_date">Soonest First</option>
             <option value="-event_date">Latest First</option>
             <option value="title">Title (A-Z)</option>
@@ -22,13 +22,13 @@
     @if($events->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($events as $event)
-            <div class="group bg-slate-800/50 border border-white/10 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+            <div class="group bg-[#12121a] border border-white/5 rounded-2xl overflow-hidden hover:border-violet-500/30 transition-all hover:shadow-[0_0_24px_rgba(124,58,237,.14)]">
                 <!-- Image -->
                 @if($event->image)
                     <img src="{{ Storage::url($event->image) }}" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $event->title }}">
                 @else
-                    <div class="w-full h-48 bg-gradient-to-br from-indigo-900 to-purple-900 flex items-center justify-center">
-                        <svg class="w-16 h-16 text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-full h-48 bg-gradient-to-br from-violet-950 to-[#1a1a26] flex items-center justify-center">
+                        <svg class="w-16 h-16 text-violet-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
@@ -48,10 +48,10 @@
                     </div>
 
                     <!-- Title -->
-                    <h3 class="text-lg font-bold text-white mb-2 line-clamp-2">{{ $event->title }}</h3>
+                    <h3 class="font-display text-lg font-bold text-white mb-2 line-clamp-2">{{ $event->title }}</h3>
 
                     <!-- Meta Info -->
-                    <div class="space-y-2 mb-4 text-sm text-slate-400">
+                    <div class="space-y-2 mb-4 text-sm text-[#8888aa]">
                         <div class="flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -68,10 +68,10 @@
 
                     <!-- Price and CTA -->
                     <div class="flex items-center justify-between">
-                        <div class="text-lg font-bold text-indigo-400">
+                        <div class="font-display text-lg font-bold text-violet-400">
                             {{ $event->price > 0 ? 'LKR ' . number_format($event->price, 0) : 'Free' }}
                         </div>
-                        <a href="{{ route('events.show', $event) }}" class="text-indigo-400 hover:text-indigo-300 text-sm font-medium transition-colors">
+                        <a href="{{ route('events.show', $event) }}" class="bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
                             View →
                         </a>
                     </div>

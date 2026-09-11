@@ -4,21 +4,21 @@
     <meta charset="UTF-8">
     <title>Events — Eventra Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>body { font-family: 'Inter', sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; background: #0a0a0f; } .font-display { font-family: 'Outfit', sans-serif; }</style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex">
+<body class="bg-[#0a0a0f] text-[#f0f0f8] min-h-screen flex">
 
     @include('admin.partials.sidebar')
 
     <main class="ml-64 flex-1 p-8">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-2xl font-bold">Events</h1>
-                <p class="text-slate-400 text-sm mt-1">Manage all events</p>
+                <h1 class="font-display text-3xl font-black">Events</h1>
+                <p class="text-[#8888aa] text-sm mt-1">Manage all events</p>
             </div>
             <a href="{{ route('admin.events.create') }}"
-                class="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-medium transition-colors">
+                class="bg-violet-600 hover:bg-violet-500 text-white px-5 py-2.5 rounded-xl font-medium transition-colors">
                 + New Event
             </a>
         </div>
@@ -29,7 +29,7 @@
         </div>
         @endif
 
-        <div class="bg-slate-800/50 border border-white/10 rounded-2xl overflow-hidden">
+        <div class="bg-[#12121a] border border-white/5 rounded-2xl overflow-hidden">
             <table class="w-full">
                 <thead class="border-b border-white/10">
                     <tr class="text-left text-slate-400 text-sm">

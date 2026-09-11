@@ -3,9 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Notifications\EmailVerificationOtpNotification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Features;
 use Tests\TestCase;
@@ -68,5 +71,39 @@ class EmailVerificationTest extends TestCase
         $this->actingAs($user)->get($verificationUrl);
 
         $this->assertFalse($user->fresh()->hasVerifiedEmail());
+    }
+
+    public function test_verification_email_can_be_resent(): void
+    {
+        if (! Features::enabled(Features::emailVerification())) {
+            $this->markTestSkipped('Email verification not enabled.');
+        }
+
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+            ->post(route('verification.send'))
+            ->assertRedirect();
+
+        Notification::assertSentTo($user, EmailVerificationOtpNotification::class);
+    }
+
+    public function test_valid_otp_verifies_email_and_redirects_to_landing_page(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $user->forceFill([
+            'email_verification_otp_hash' => Hash::make('123456'),
+            'email_verification_otp_expires_at' => now()->addMinutes(10),
+            'email_verification_otp_attempts' => 0,
+        ])->save();
+
+        $response = $this->actingAs($user)->post(route('verification.otp.verify'), [
+            'code' => '123456',
+        ]);
+
+        $response->assertRedirect(route('landing', absolute: false));
+        $this->assertTrue($user->fresh()->hasVerifiedEmail());
     }
 }

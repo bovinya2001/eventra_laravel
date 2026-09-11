@@ -5,22 +5,54 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">
-            {{ __('Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+            {{ __('Before continuing, enter the six-digit verification code we sent to your email address.') }}
         </div>
 
-        @if (session('status') == 'verification-link-sent')
-            <div class="mb-4 font-medium text-sm text-green-600">
-                {{ __('A new verification link has been sent to the email address you provided in your profile settings.') }}
+        <div class="mb-4 text-sm font-medium text-gray-700">
+            {{ auth()->user()->email }}
+        </div>
+
+        @if (config('mail.default') === 'log')
+            <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                {{ __('Email delivery is using the local log mailer. The verification code is being written to storage/logs/laravel.log instead of being sent to your inbox.') }}
             </div>
         @endif
 
+        @if (session('status') == 'verification-otp-sent')
+            <div class="mb-4 font-medium text-sm text-green-600">
+                {{ __('A new verification code has been sent to your email address.') }}
+            </div>
+        @endif
+
+        @if ($errors->has('code'))
+            <div class="mb-4 text-sm text-red-600">
+                {{ $errors->first('code') }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('verification.otp.verify') }}" class="mt-4">
+            @csrf
+
+            <div>
+                <x-label for="code" value="Verification code" />
+                <x-input id="code" class="block mt-1 w-full text-center tracking-[0.5em]" type="text" name="code"
+                    inputmode="numeric" autocomplete="one-time-code" maxlength="6" required autofocus />
+            </div>
+
+            <div class="mt-4">
+                <x-button type="submit" class="w-full justify-center">
+                    {{ __('Verify Email') }}
+                </x-button>
+            </div>
+        </form>
+
         <div class="mt-4 flex items-center justify-between">
-            <form method="POST" action="{{ route('verification.send') }}">
+            <form method="POST" action="{{ route('verification.otp.send') }}">
                 @csrf
 
                 <div>
                     <x-button type="submit">
-                        {{ __('Resend Verification Email') }}
+                        {{ __('Send New Code') }}
                     </x-button>
                 </div>
             </form>

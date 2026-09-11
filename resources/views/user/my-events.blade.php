@@ -11,10 +11,13 @@
     <nav class="bg-slate-900/80 border-b border-white/10 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             <a href="{{ route('events.index') }}" class="text-slate-400 hover:text-white transition-colors">← Browse Events</a>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="text-slate-400 hover:text-red-400 text-sm transition-colors">Logout</button>
-            </form>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('dashboard') }}" class="text-slate-400 hover:text-white text-sm transition-colors">Dashboard</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="text-slate-400 hover:text-red-400 text-sm transition-colors">Logout</button>
+                </form>
+            </div>
         </div>
     </nav>
 

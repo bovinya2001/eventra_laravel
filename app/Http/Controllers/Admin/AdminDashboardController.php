@@ -12,7 +12,7 @@ class AdminDashboardController extends Controller
     {
         $stats = [
             'total_events'        => Event::count(),
-            'total_users'         => User::where('is_admin', false)->count(),
+            'total_users'         => User::count(),
             'total_registrations' => Registration::count(),
             'upcoming_events'     => Event::where('status', 'upcoming')->count(),
         ];

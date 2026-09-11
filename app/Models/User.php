@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,8 +10,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\EmailVerificationOtpNotification;
+use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens;
 
@@ -22,12 +24,25 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
+    public function sendEmailVerificationNotification(): void
+    {
+        $code = (string) random_int(100000, 999999);
+
+        $this->forceFill([
+            'email_verification_otp_hash' => Hash::make($code),
+            'email_verification_otp_expires_at' => now()->addMinutes(10),
+            'email_verification_otp_attempts' => 0,
+        ])->save();
+
+        $this->notify(new EmailVerificationOtpNotification($code));
+    }
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
- protected $fillable = ['name', 'email', 'password', 'is_admin'];
+ protected $fillable = ['name', 'email', 'password'];
 
 public function registrations()
 {
@@ -59,12 +74,6 @@ public function unreadNotifications()
     return $this->notifications()->whereNull('read_at');
 }
 
-public function isAdmin(): bool
-{
-    return (bool) $this->is_admin;
-}
-
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -75,6 +84,7 @@ public function isAdmin(): bool
         'remember_token',
         'two_factor_recovery_codes',
         'two_factor_secret',
+        'email_verification_otp_hash',
     ];
 
     /**
@@ -96,6 +106,7 @@ public function isAdmin(): bool
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'email_verification_otp_expires_at' => 'datetime',
         ];
     }
 }

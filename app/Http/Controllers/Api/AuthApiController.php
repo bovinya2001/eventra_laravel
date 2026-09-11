@@ -3,13 +3,21 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthApiController extends Controller
 {
+    private const MOBILE_TOKEN_ABILITIES = [
+        'profile:read',
+        'profile:write',
+        'registrations:read',
+        'registrations:write',
+        'passes:read',
+    ];
+
     /**
      * Register a new user
      * POST /api/v1/register
@@ -28,7 +36,9 @@ class AuthApiController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        $token = $user->createToken('eventra-mobile')->plainTextToken;
+        event(new Registered($user));
+
+        $token = $this->issueMobileToken($user);
 
         return response()->json([
             'status'  => 'success',
@@ -63,7 +73,7 @@ class AuthApiController extends Controller
 
         // Revoke old tokens and create fresh one
         $user->tokens()->delete();
-        $token = $user->createToken('eventra-mobile')->plainTextToken;
+        $token = $this->issueMobileToken($user);
 
         return response()->json([
             'status'  => 'success',
@@ -107,12 +117,24 @@ class AuthApiController extends Controller
             'email' => 'sometimes|email|unique:users,email,' . $request->user()->id,
         ]);
 
-        $request->user()->update($data);
+        $user = $request->user();
+
+        if (array_key_exists('email', $data) && $data['email'] !== $user->email) {
+            $user->forceFill([
+                'name' => $data['name'] ?? $user->name,
+                'email' => $data['email'],
+                'email_verified_at' => null,
+            ])->save();
+
+            $user->sendEmailVerificationNotification();
+        } else {
+            $user->update($data);
+        }
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Profile updated.',
-            'data'    => $this->formatUser($request->user()->fresh()),
+            'data'    => $this->formatUser($user->fresh()),
         ]);
     }
 
@@ -138,5 +160,14 @@ class AuthApiController extends Controller
             'name'  => $user->name,
             'email' => $user->email,
         ];
+    }
+
+    private function issueMobileToken(User $user): string
+    {
+        return $user->createToken(
+            'eventra-mobile',
+            self::MOBILE_TOKEN_ABILITIES,
+            now()->addMinutes((int) config('sanctum.expiration')),
+        )->plainTextToken;
     }
 }

@@ -23,7 +23,6 @@
 
                 @foreach([
                     ['name'=>'title','label'=>'Event Title','type'=>'text','placeholder'=>'e.g. Tech Summit 2025'],
-                    ['name'=>'location','label'=>'Location','type'=>'text','placeholder'=>'e.g. Colombo, Sri Lanka'],
                     ['name'=>'event_date','label'=>'Date & Time','type'=>'datetime-local','placeholder'=>''],
                     ['name'=>'capacity','label'=>'Capacity','type'=>'number','placeholder'=>'e.g. 100'],
                     ['name'=>'price','label'=>'Price (LKR)','type'=>'number','placeholder'=>'0 for free'],
@@ -37,6 +36,23 @@
                     @error($field['name']) <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 @endforeach
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Venue location</label>
+                    <select id="location_key" name="location_key" required
+                        class="w-full bg-slate-900/60 border border-slate-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Select one of {{ count($venues) }} locations</option>
+                        @foreach($venues as $key => $venue)
+                            <option value="{{ $key }}" data-lat="{{ $venue['lat'] }}" data-lng="{{ $venue['lng'] }}"
+                                {{ old('location_key') === $key ? 'selected' : '' }}>
+                                {{ $venue['name'] }} — {{ $venue['district'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('location_key') <p class="text-red-400 text-xs mt-1">{{ $message }}</p> @enderror
+                    <iframe id="venue-map" title="Selected venue map" class="mt-4 hidden h-72 w-full rounded-xl border border-slate-600" loading="lazy"></iframe>
+                    <p class="mt-2 text-xs text-slate-500">Map data © OpenStreetMap contributors</p>
+                </div>
 
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-2">Description</label>
@@ -73,5 +89,6 @@
             </form>
         </div>
     </main>
+    @include('admin.events.partials.location-map-script')
 </body>
 </html>

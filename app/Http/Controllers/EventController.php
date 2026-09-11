@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Services\WeatherForecastService;
 
 class EventController extends Controller
 {
@@ -11,11 +12,12 @@ class EventController extends Controller
         return view('user.events.index', compact('events'));
     }
 
-    public function show(Event $event)
+    public function show(Event $event, WeatherForecastService $weatherService)
     {
         $isRegistered = auth()->check()
             ? auth()->user()->events()->where('event_id', $event->id)->exists()
             : false;
-        return view('user.events.show', compact('event', 'isRegistered'));
+        $weather = $weatherService->forEvent($event);
+        return view('user.events.show', compact('event', 'isRegistered', 'weather'));
     }
 }

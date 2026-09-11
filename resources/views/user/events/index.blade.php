@@ -24,6 +24,7 @@
             </a>
             <div class="flex items-center gap-4">
                 @auth
+                    <a href="{{ route('dashboard') }}" class="text-slate-400 hover:text-white text-sm transition-colors">Dashboard</a>
                     <a href="{{ route('my.events') }}" class="text-slate-400 hover:text-white text-sm transition-colors">My Events</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

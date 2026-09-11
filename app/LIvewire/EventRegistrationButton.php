@@ -33,14 +33,24 @@ class EventRegistrationButton extends Component
             $this->message = 'You are already registered.';
             return;
         }
-        Registration::create([
+        $isFree = (float) $this->event->price <= 0;
+        $registration = Registration::create([
             'user_id'  => auth()->id(),
             'event_id' => $this->event->id,
-            'status'   => 'confirmed',
+            'status'   => $isFree ? 'confirmed' : 'pending',
+            'payment_status' => $isFree ? 'paid' : 'pending',
+            'payment_method' => $isFree ? 'free' : null,
+            'payment_amount' => $this->event->price,
+            'payment_reference' => $isFree ? 'FREE-'.$this->event->id.'-'.auth()->id() : null,
+            'paid_at' => $isFree ? now() : null,
         ]);
         $this->isRegistered = true;
-        $this->message = 'Successfully registered!';
-        $this->event->refresh();
+        $this->redirect(
+            $registration->canGeneratePass()
+                ? route('registrations.pass', $registration)
+                : route('registrations.checkout', $registration),
+            navigate: true,
+        );
     }
 
     public function cancel(): void

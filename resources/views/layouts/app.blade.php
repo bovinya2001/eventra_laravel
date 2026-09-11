@@ -6,30 +6,31 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Eventra') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     @livewireStyles
     <style>
-        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #f0f0f8; }
+        .font-display { font-family: 'Outfit', sans-serif; }
         [x-cloak] { display: none !important; }
     </style>
     {{ $style ?? '' }}
 </head>
-<body class="min-h-screen bg-slate-900">
+<body class="min-h-screen bg-[#0a0a0f]">
 
     <!-- Top Navigation -->
-    <nav class="bg-slate-900/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+    <nav class="bg-[#0a0a0f]/80 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex justify-between items-center h-16">
 
                 <!-- Logo -->
                 <a href="{{ route('dashboard') }}" class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                    <div class="w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center font-display font-black">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
-                    <span class="font-bold text-lg text-white">Eventra</span>
+                    <span class="font-display font-extrabold text-lg text-white tracking-tight">eventra</span>
                 </a>
 
                 <!-- Nav Links -->
@@ -58,8 +59,8 @@
                     @livewire('notification-bell')
 
                     <button @click="open = !open"
-                        class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl px-3 py-2 transition-colors">
-                        <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-xs font-bold text-white">
+                        class="flex items-center gap-2 bg-[#12121a] hover:bg-[#1a1a26] border border-white/5 rounded-xl px-3 py-2 transition-colors">
+                        <div class="w-7 h-7 bg-violet-600 rounded-lg flex items-center justify-center text-xs font-bold text-white">
                             {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
                         <span class="text-sm text-white hidden md:block">{{ auth()->user()->name }}</span>
@@ -70,7 +71,7 @@
 
                     <!-- Dropdown -->
                     <div x-show="open" @click.away="open = false" x-cloak
-                        class="absolute right-6 top-16 w-48 bg-slate-800 border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50">
+                        class="absolute right-6 top-16 w-48 bg-[#12121a] border border-white/10 rounded-2xl shadow-xl overflow-hidden z-50">
                         <div class="px-4 py-3 border-b border-white/10">
                             <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
                             <p class="text-xs text-slate-400 truncate">{{ auth()->user()->email }}</p>
@@ -99,7 +100,7 @@
 
     <!-- Page Header -->
     @if (isset($header))
-    <header class="bg-slate-800/30 border-b border-white/5">
+    <header class="bg-[#12121a]/40 border-b border-white/5">
         <div class="max-w-7xl mx-auto px-6 py-4">
             {{ $header }}
         </div>

@@ -34,6 +34,7 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
+        Fortify::verifyEmailView(fn () => view('auth.verify-email'));
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
@@ -43,6 +44,20 @@ class FortifyServiceProvider extends ServiceProvider
 
         RateLimiter::for('two-factor', function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        });
+
+        RateLimiter::for('api-auth', function (Request $request) {
+            $identity = Str::transliterate(Str::lower((string) $request->input('email')));
+
+            return Limit::perMinute(5)->by($identity.'|'.$request->ip());
+        });
+
+        RateLimiter::for('api-registration', function (Request $request) {
+            return Limit::perHour(5)->by($request->ip());
+        });
+
+        RateLimiter::for('api-public', function (Request $request) {
+            return Limit::perMinute(120)->by($request->user()?->id ?? $request->ip());
         });
 
         RateLimiter::for('passkeys', function (Request $request) {

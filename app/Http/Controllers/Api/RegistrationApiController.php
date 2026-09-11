@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Registration;
+use App\Services\VenuePassQrCode;
 use Illuminate\Http\Request;
 
 class RegistrationApiController extends Controller
@@ -77,17 +78,42 @@ class RegistrationApiController extends Controller
             ], 422);
         }
 
+        $isFree = (float) $event->price <= 0;
         $registration = Registration::create([
             'user_id'  => $request->user()->id,
             'event_id' => $event->id,
-            'status'   => 'confirmed',
+            'status'   => $isFree ? 'confirmed' : 'pending',
+            'payment_status' => $isFree ? 'paid' : 'pending',
+            'payment_method' => $isFree ? 'free' : null,
+            'payment_amount' => $event->price,
+            'payment_reference' => $isFree ? 'FREE-'.$event->id.'-'.$request->user()->id : null,
+            'paid_at' => $isFree ? now() : null,
         ]);
 
         return response()->json([
             'status'  => 'success',
-            'message' => 'Successfully registered for ' . $event->title,
+            'message' => $isFree
+                ? 'Registration complete. Your venue pass is ready.'
+                : 'Registration created. Complete payment to unlock your venue pass.',
             'data'    => $this->formatRegistration($registration->load('event')),
         ], 201);
+    }
+
+    public function qr(Request $request, Registration $registration, VenuePassQrCode $qrCode)
+    {
+        $this->ensureOwner($request, $registration);
+
+        if (!$registration->canGeneratePass()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Complete payment before generating a venue pass.',
+            ], 422);
+        }
+
+        return response($qrCode->svg($registration), 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Cache-Control' => 'private, no-store',
+        ]);
     }
 
     /**
@@ -127,7 +153,16 @@ class RegistrationApiController extends Controller
     {
         return [
             'id'         => $registration->id,
+            'uuid'       => $registration->uuid,
             'status'     => $registration->status,
+            'payment' => [
+                'status' => $registration->payment_status,
+                'method' => $registration->payment_method,
+                'amount' => $registration->payment_amount,
+                'reference' => $registration->payment_reference,
+                'paid_at' => $registration->paid_at?->toISOString(),
+            ],
+            'can_generate_pass' => $registration->canGeneratePass(),
             'registered_at' => $registration->created_at->toISOString(),
             'registered_at_human' => $registration->created_at->diffForHumans(),
             'event'      => $registration->event ? [
@@ -142,5 +177,10 @@ class RegistrationApiController extends Controller
                     : 'Free',
             ] : null,
         ];
+    }
+
+    private function ensureOwner(Request $request, Registration $registration): void
+    {
+        abort_unless($registration->user_id === $request->user()->id, 403);
     }
 }

@@ -3,7 +3,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Registration;
-use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class RegistrationController extends Controller
@@ -16,24 +15,21 @@ class RegistrationController extends Controller
         if (auth()->user()->events()->where('event_id', $event->id)->exists()) {
             return back()->with('error', 'You are already registered.');
         }
-        Registration::create([
+        $isFree = (float) $event->price <= 0;
+        $registration = Registration::create([
             'user_id'  => auth()->id(),
             'event_id' => $event->id,
-            'status'   => 'confirmed',
+            'status'   => $isFree ? 'confirmed' : 'pending',
+            'payment_status' => $isFree ? 'paid' : 'pending',
+            'payment_method' => $isFree ? 'free' : null,
+            'payment_amount' => $event->price,
+            'payment_reference' => $isFree ? 'FREE-'.$event->id.'-'.auth()->id() : null,
+            'paid_at' => $isFree ? now() : null,
         ]);
 
-        // Send notification
-        Notification::create([
-            'user_id' => auth()->id(),
-            'event_id' => $event->id,
-            'type' => 'registration_confirmation',
-            'title' => 'Registration Confirmed',
-            'message' => "You've successfully registered for {$event->title}",
-            'icon' => 'check-circle',
-            'color' => 'green',
-        ]);
-
-        return back()->with('success', 'Registered successfully!');
+        return $registration->canGeneratePass()
+            ? redirect()->route('registrations.pass', $registration)
+            : redirect()->route('registrations.checkout', $registration);
     }
 
     public function destroy(Event $event)

@@ -4,11 +4,11 @@
             <x-authentication-card-logo />
         </x-slot>
 
-        <div class="mb-4 text-sm text-gray-600">
+        <div class="mb-4 text-sm leading-6 text-[#6b7280]">
             {{ __('Before continuing, enter the six-digit verification code we sent to your email address.') }}
         </div>
 
-        <div class="mb-4 text-sm font-medium text-gray-700">
+        <div class="mb-4 text-sm font-semibold text-[#1a1523]">
             {{ auth()->user()->email }}
         </div>
 
@@ -19,13 +19,13 @@
         @endif
 
         @if (session('status') == 'verification-otp-sent')
-            <div class="mb-4 font-medium text-sm text-green-600">
+            <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
                 {{ __('A new verification code has been sent to your email address.') }}
             </div>
         @endif
 
         @if ($errors->has('code'))
-            <div class="mb-4 text-sm text-red-600">
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {{ $errors->first('code') }}
             </div>
         @endif
@@ -60,14 +60,14 @@
             <div>
                 <a
                     href="{{ route('profile.show') }}"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    class="rounded-md text-sm text-[#6b7280] underline hover:text-[#7c3aed] focus:outline-none focus:ring-2 focus:ring-[#8b5cf6] focus:ring-offset-2"
                 >
                     {{ __('Edit Profile') }}</a>
 
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
 
-                    <button type="submit" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ms-2">
+                    <button type="submit" class="ms-2 rounded-md text-sm text-[#6b7280] underline hover:text-[#7c3aed] focus:outline-none focus:ring-2 focus:ring-[#8b5cf6] focus:ring-offset-2">
                         {{ __('Log Out') }}
                     </button>
                 </form>

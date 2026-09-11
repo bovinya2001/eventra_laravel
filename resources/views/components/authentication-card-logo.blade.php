@@ -1,6 +1,13 @@
-<a href="/">
-    <svg class="size-16" viewbox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.395 44.428C4.557 40.198 0 32.632 0 24 0 10.745 10.745 0 24 0a23.891 23.891 0 0113.997 4.502c-.2 17.907-11.097 33.245-26.602 39.926z" fill="#6875F5"/>
-        <path d="M14.134 45.885A23.914 23.914 0 0024 48c13.255 0 24-10.745 24-24 0-3.516-.756-6.856-2.115-9.866-4.659 15.143-16.608 27.092-31.75 31.751z" fill="#6875F5"/>
-    </svg>
+<a href="/" class="flex flex-col items-center text-center no-underline">
+    <span class="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-[#ede9fe] text-[#7c3aed]">
+        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="8" cy="15" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="16" cy="15" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+    </span>
+    <span class="mt-3 font-serif text-[28px] leading-none text-[#1a1523]">Eventra</span>
+    <span class="mt-2 text-[13.5px] text-[#6b7280]">Your gateway to amazing events</span>
 </a>
